@@ -55,6 +55,7 @@ object Network {
         }
     }
 
+
     private val json = Json {
         ignoreUnknownKeys = true
         isLenient = true
