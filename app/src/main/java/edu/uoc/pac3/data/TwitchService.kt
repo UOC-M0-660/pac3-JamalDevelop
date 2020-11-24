@@ -1,10 +1,16 @@
 package edu.uoc.pac3.data
 
+import android.content.Context
+import android.util.Log
+import edu.uoc.pac3.data.network.Endpoints
+import edu.uoc.pac3.data.network.Network
+import edu.uoc.pac3.data.oauth.OAuthConstants
 import edu.uoc.pac3.data.oauth.OAuthTokensResponse
 import edu.uoc.pac3.data.oauth.UnauthorizedException
 import edu.uoc.pac3.data.streams.StreamsResponse
 import edu.uoc.pac3.data.user.User
 import io.ktor.client.*
+import io.ktor.client.request.*
 
 /**
  * Created by alex on 24/10/2020.
@@ -15,7 +21,17 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
     /// Gets Access and Refresh Tokens on Twitch
     suspend fun getTokens(authorizationCode: String): OAuthTokensResponse? {
-        TODO("Get Tokens from Twitch")
+
+        val response = httpClient.post<OAuthTokensResponse>("https://id.twitch.tv/oauth2/token") {
+            parameter("client_id", OAuthConstants.CLIENT_ID)
+            parameter("client_secret", OAuthConstants.CLIENT_SECRET)
+            parameter("code", authorizationCode)
+            parameter("grant_type", "authorization_code")
+            parameter("redirect_uri", OAuthConstants.REDIRECT_URI)
+        }
+
+        Log.d(TAG, "Access Token: ${response.accessToken}. Refresh Token: ${response.refreshToken}")
+        return response
     }
 
     /// Gets Streams on Twitch
