@@ -6,12 +6,13 @@ package edu.uoc.pac3.data.oauth
 object OAuthConstants {
 
     // TODO: Set OAuth2 Variables
-    val OAUTH_PROVIDER = "https://id.twitch.tv/oauth2/authorize"
-    val CLIENT_ID = "8i31vi7gx0av33gnwnwtxzopj1b4vg"
-    val REDIRECT_URI = "http://localhost"
-    val CLIENT_SECRET = "3ajm9wqd6w9p6v2t79bf8f0r1k15m9"
-    val RESPONSE_TYPE = "code"
-    val SCOPES = "user:read:email bits:read channel:read:hype_train analytics:read:games"
-    //user%3Aread%3Aemail%20bits%3Aread%20channel%3Aread%3Ahype_train%20analytics%3Aread%3Agames
+    const val CLIENT_ID = "8i31vi7gx0av33gnwnwtxzopj1b4vg"
+    const val REDIRECT_URI = "http://localhost"
+    const val CLIENT_SECRET = "3ajm9wqd6w9p6v2t79bf8f0r1k15m9"
+    const val RESPONSE_TYPE = "code"
+    const val SCOPES = "user:read:email bits:read channel:read:hype_train analytics:read:games"
+    const val ACCESS_TOKEN_PREFERENCES = "accessToken"
+    const val REFRESH_TOKEN_PREFERENCES = "refreshToken"
+
 
 }

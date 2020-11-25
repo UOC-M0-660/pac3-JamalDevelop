@@ -9,15 +9,13 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import edu.uoc.pac3.R
+import edu.uoc.pac3.data.SessionManager
 import edu.uoc.pac3.data.TwitchApiService
+import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import kotlinx.android.synthetic.main.activity_oauth.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 class OAuthActivity : AppCompatActivity() {
@@ -32,10 +30,8 @@ class OAuthActivity : AppCompatActivity() {
 
     fun buildOAuthUri(): Uri {
         // TODO: Create URI
-        val authorizationUrl = OAuthConstants.OAUTH_PROVIDER
-
         // Prepare URL
-        val uri = Uri.parse(authorizationUrl)
+        val uri = Uri.parse(Endpoints.authorization)
             .buildUpon()
             .appendQueryParameter("client_id", OAuthConstants.CLIENT_ID)
             .appendQueryParameter("redirect_uri", OAuthConstants.REDIRECT_URI)
@@ -49,7 +45,6 @@ class OAuthActivity : AppCompatActivity() {
     private fun launchOAuthAuthorization() {
         //  Create URI
         val uri = buildOAuthUri()
-        var authorizationCode = ""
 
         // Set webView Redirect Listener
         webView.webViewClient = object : WebViewClient() {
@@ -64,10 +59,9 @@ class OAuthActivity : AppCompatActivity() {
                         val responseState = request.url.getQueryParameter("state")
                         if (responseState == uniqueState) {
                             // This is our request, obtain the code!
-                            request.url.getQueryParameter("code")?.let { code ->
+                            request.url.getQueryParameter("code")?.let { authorizationCode ->
                                 // Got it!
-                                Log.d("OAuth", "Here is the authorization code! $code")
-                                authorizationCode = code
+                                Log.d("OAuth", "Here is the authorization code! $authorizationCode")
                                 runBlocking {
                                     val tokens =
                                         TwitchApiService(Network.createHttpClient(applicationContext)).getTokens(
@@ -77,6 +71,10 @@ class OAuthActivity : AppCompatActivity() {
                                         "OAuth-TOKENS",
                                         "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
                                     )
+
+                                    //save tokens
+                                    SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
+                                    SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
                                 }
                             } ?: run {
                                 // User cancelled the login flow
@@ -88,6 +86,8 @@ class OAuthActivity : AppCompatActivity() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
+
+
 
 
         // Load OAuth Uri
