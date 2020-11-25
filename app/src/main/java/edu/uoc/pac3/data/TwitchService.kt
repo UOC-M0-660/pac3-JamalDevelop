@@ -22,7 +22,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
     /// Gets Access and Refresh Tokens on Twitch
     suspend fun getTokens(authorizationCode: String): OAuthTokensResponse? {
 
-        val response = httpClient.post<OAuthTokensResponse>("https://id.twitch.tv/oauth2/token") {
+        val response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
             parameter("client_id", OAuthConstants.CLIENT_ID)
             parameter("client_secret", OAuthConstants.CLIENT_SECRET)
             parameter("code", authorizationCode)
