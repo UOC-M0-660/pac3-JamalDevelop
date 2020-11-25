@@ -9,7 +9,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import edu.uoc.pac3.R
+import edu.uoc.pac3.data.SessionManager
 import edu.uoc.pac3.data.TwitchApiService
+import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import kotlinx.android.synthetic.main.activity_oauth.*
@@ -77,6 +79,10 @@ class OAuthActivity : AppCompatActivity() {
                                         "OAuth-TOKENS",
                                         "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
                                     )
+                                    SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
+                                    SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
+                                    val aToken = SessionManager(this@OAuthActivity).getAccessToken()
+                                    Log.d("aToken", "ACCESS TOKEN IS $aToken")
                                 }
                             } ?: run {
                                 // User cancelled the login flow
@@ -88,6 +94,8 @@ class OAuthActivity : AppCompatActivity() {
                 return super.shouldOverrideUrlLoading(view, request)
             }
         }
+
+
 
 
         // Load OAuth Uri

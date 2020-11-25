@@ -12,6 +12,8 @@ object OAuthConstants {
     val CLIENT_SECRET = "3ajm9wqd6w9p6v2t79bf8f0r1k15m9"
     val RESPONSE_TYPE = "code"
     val SCOPES = "user:read:email bits:read channel:read:hype_train analytics:read:games"
-    //user%3Aread%3Aemail%20bits%3Aread%20channel%3Aread%3Ahype_train%20analytics%3Aread%3Agames
+    val ACCESS_TOKEN_PREFERENCES = "accessToken"
+    val REFRESH_TOKEN_PREFERENCES = "refreshToken"
+
 
 }

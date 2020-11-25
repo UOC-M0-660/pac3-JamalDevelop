@@ -22,4 +22,7 @@
     <string name="error_streams">Error getting Streams</string>
     <string name="error_profile">Error getting Profile</string>
     <string name="error_profile_update">Error updating profile</string>
+
+    <!-- File SharedPreferences -->
+    <string name="preference_file_key">edu.uoc.pac3.PREFERENCE_FILE_KEY</string>
 </resources>
