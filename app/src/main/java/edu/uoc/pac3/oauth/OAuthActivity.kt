@@ -15,11 +15,7 @@ import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import kotlinx.android.synthetic.main.activity_oauth.*
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import java.net.HttpURLConnection
-import java.net.URL
 import java.util.*
 
 class OAuthActivity : AppCompatActivity() {
