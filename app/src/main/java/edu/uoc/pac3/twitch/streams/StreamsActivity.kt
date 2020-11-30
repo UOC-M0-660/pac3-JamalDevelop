@@ -1,6 +1,7 @@
 package edu.uoc.pac3.twitch.streams
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,17 +25,16 @@ class StreamsActivity : AppCompatActivity() {
 
     private val TAG = "StreamsActivity"
 
-    private lateinit var adapter: StreamsListAdapter
+    private lateinit var streamListAdapter: StreamsListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_streams)
         // Init RecyclerView
         initRecyclerView()
+
         // TODO: Get Streams
-
         getStreams()
-
 
     }
 
@@ -44,11 +44,11 @@ class StreamsActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
         // Set Layout Manager
-        val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
         // Init Adapter
-        adapter = StreamsListAdapter(mutableListOf())
+        streamListAdapter = StreamsListAdapter(mutableListOf())
+        recyclerView.adapter = streamListAdapter
     }
 
 
@@ -57,26 +57,23 @@ class StreamsActivity : AppCompatActivity() {
         var streams: MutableList<Stream> = mutableListOf()
 
         GlobalScope.launch {
+            // DownLoading Streams
             streams = loadStreams()?.data as MutableList<Stream>
+            Log.i("STREAMS", streams.toString())
 
-//            runOnUiThread {
-//                adapter = StreamsListAdapter(streams)
-//            }
+            // Loading Streams in RecyclerView
+            runOnUiThread {
+                val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+                streamListAdapter = StreamsListAdapter(streams)
+                recyclerView.adapter = streamListAdapter
+            }
         }
-
-//        adapter = StreamsListAdapter(streams)
-        adapter.apply { StreamsListAdapter(streams) }
-
 
     }
 
+    // Load Streams
     private suspend fun loadStreams(): StreamsResponse? {
-        var streamsResponse: StreamsResponse? = null
-
         return TwitchApiService(Network.createHttpClient(this)).getStreams()
-
-
-//        return streamsResponse
     }
 
 }
