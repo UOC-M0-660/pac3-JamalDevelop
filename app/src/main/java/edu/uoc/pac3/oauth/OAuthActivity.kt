@@ -14,6 +14,7 @@ import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
+import edu.uoc.pac3.data.oauth.OAuthTokensResponse
 import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.coroutines.runBlocking
 import java.util.*
@@ -62,20 +63,7 @@ class OAuthActivity : AppCompatActivity() {
                             request.url.getQueryParameter("code")?.let { authorizationCode ->
                                 // Got it!
                                 Log.d("OAuth", "Here is the authorization code! $authorizationCode")
-                                runBlocking {
-                                    val tokens =
-                                        TwitchApiService(Network.createHttpClient(applicationContext)).getTokens(
-                                            authorizationCode
-                                        )
-                                    Log.d(
-                                        "OAuth-TOKENS",
-                                        "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
-                                    )
-
-                                    //save tokens
-                                    SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
-                                    SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
-                                }
+                                onAuthorizationCodeRetrieved(authorizationCode)
                             } ?: run {
                                 // User cancelled the login flow
                                 // TODO: Handle error
@@ -101,6 +89,27 @@ class OAuthActivity : AppCompatActivity() {
 
         // Show Loading Indicator
         progressBar.visibility = View.VISIBLE
+
+
+        runBlocking {
+            val tokens =
+                TwitchApiService(Network.createHttpClient(applicationContext)).getTokens(
+                    authorizationCode
+                )
+            Log.d(
+                "OAuth-TOKENS",
+                "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
+            )
+
+            //save tokens
+            SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
+            SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
+
+            runOnUiThread{
+                progressBar.visibility = View.INVISIBLE
+            }
+        }
+
 
         // TODO: Create Twitch Service
 

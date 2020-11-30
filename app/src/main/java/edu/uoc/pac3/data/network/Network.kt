@@ -2,6 +2,7 @@ package edu.uoc.pac3.data.network
 
 import android.content.Context
 import android.util.Log
+import edu.uoc.pac3.data.SessionManager
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
@@ -21,6 +22,7 @@ object Network {
 
     fun createHttpClient(context: Context): HttpClient {
         return HttpClient(OkHttp) {
+
             // TODO: Setup HttpClient
             // Json
             install(JsonFeature) {
@@ -43,15 +45,18 @@ object Network {
             }
             // Apply to All Requests
             defaultRequest {
-                parameter("api_key", "some_api_key")
+                Log.i("Authorization", "Bearer ${SessionManager(context).getAccessToken()}")
+//                parameter("Authorization", "Bearer ${SessionManager(context).getAccessToken()}")
+
                 // Content Type
                 if (this.method != HttpMethod.Get) contentType(ContentType.Application.Json)
+                header("Authorization", "Bearer ${SessionManager(context).getAccessToken()}")
                 accept(ContentType.Application.Json)
             }
             // Optional OkHttp Interceptors
-            engine {
-//                addInterceptor(CurlInterceptor(Loggable { Log.v("Curl", it) }))
-            }
+//            engine {
+////                addInterceptor(CurlInterceptor(Loggable { Log.v("Curl", it) }))
+//            }
         }
     }
 

@@ -11,4 +11,5 @@ import kotlinx.serialization.Serializable
 data class User(
     @SerialName("userName") val userName: String? = null,
     @SerialName("description") val description: String? = null,
+    @SerialName("data") val data: List<User>? = null,
 )
