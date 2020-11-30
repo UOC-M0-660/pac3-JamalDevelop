@@ -2,6 +2,7 @@ package edu.uoc.pac3.twitch.streams
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.pac3.R
 
 class StreamsActivity : AppCompatActivity() {
@@ -14,10 +15,18 @@ class StreamsActivity : AppCompatActivity() {
         // Init RecyclerView
         initRecyclerView()
         // TODO: Get Streams
+
+
+
     }
 
     private fun initRecyclerView() {
         // TODO: Implement
+
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+
+
+
     }
 
 }
