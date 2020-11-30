@@ -4,8 +4,11 @@ package edu.uoc.pac3.data.streams
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import edu.uoc.pac3.R
 
 class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView.Adapter<StreamsListAdapter.ViewHolder>() {
@@ -22,7 +25,17 @@ class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView
     override fun onBindViewHolder(holder: StreamsListAdapter.ViewHolder, position: Int) {
         holder.vhTitle.text = streams[position].title
         holder.vhUserName.text = streams[position].userName
-        holder.vhThumbnailUrl.text = streams[position].thumbnail_url
+
+
+        // Load imageThumbnail
+        val thumbnailUrl = streams[position].thumbnail_url
+            ?.replace("{width}", "100")
+            ?.replace("{height}", "100")
+
+        Glide.with(holder.vhThumbnailUrl.context)
+            .load(thumbnailUrl)
+            .into(holder.vhThumbnailUrl)
+
     }
 
     // Return number of Streams
@@ -34,7 +47,7 @@ class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val vhUserName = view.findViewById<TextView>(R.id.st_username)
         val vhTitle = view.findViewById<TextView>(R.id.st_title)
-        val vhThumbnailUrl = view.findViewById<TextView>(R.id.st_thumbnail_url)
+        val vhThumbnailUrl = view.findViewById<ImageView>(R.id.st_thumbnail_url)
     }
 
 }

@@ -30,6 +30,7 @@
     <string name="user_name">User Name</string>
     <string name="title">Title</string>
     <string name="thumbnail_url">Thumbnail URL</string>
+    <string name="image_stream">Image Stream</string>
 
 
 </resources>
