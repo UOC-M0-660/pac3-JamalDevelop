@@ -13,6 +13,7 @@ object OAuthConstants {
     const val SCOPES = "user:read:email bits:read channel:read:hype_train analytics:read:games"
     const val ACCESS_TOKEN_PREFERENCES = "accessToken"
     const val REFRESH_TOKEN_PREFERENCES = "refreshToken"
+    const val FIRST = 2.toString()
 
 
 }

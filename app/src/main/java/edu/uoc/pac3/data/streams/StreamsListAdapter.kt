@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import edu.uoc.pac3.R
 
 class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView.Adapter<StreamsListAdapter.ViewHolder>() {
@@ -37,6 +36,8 @@ class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView
             .into(holder.vhThumbnailUrl)
 
     }
+
+
 
     // Return number of Streams
     override fun getItemCount(): Int {

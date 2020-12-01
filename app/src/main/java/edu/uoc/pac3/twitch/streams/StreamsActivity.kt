@@ -7,30 +7,24 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.pac3.R
 import edu.uoc.pac3.data.TwitchApiService
-import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
-import edu.uoc.pac3.data.oauth.OAuthConstants
-import edu.uoc.pac3.data.oauth.OAuthTokensResponse
 import edu.uoc.pac3.data.streams.Cursor
 import edu.uoc.pac3.data.streams.Stream
 import edu.uoc.pac3.data.streams.StreamsListAdapter
 import edu.uoc.pac3.data.streams.StreamsResponse
-import edu.uoc.pac3.oauth.OAuthActivity
-import io.ktor.client.request.*
 import kotlinx.android.synthetic.main.activity_streams.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class StreamsActivity : AppCompatActivity() {
 
     private val TAG = "StreamsActivity"
 
     private lateinit var streamListAdapter: StreamsListAdapter
-    private lateinit var cursorPagination: String // Cursor pagination
+    private var cursorPagination: String? = null // Cursor pagination
     private lateinit var layoutManager: LinearLayoutManager
     private lateinit var streams: MutableList<Stream> // List of Streams
+    private lateinit var recyclerView: RecyclerView // RecyclerView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +45,10 @@ class StreamsActivity : AppCompatActivity() {
     // Init RecyclerView
     private fun initRecyclerView() {
 
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply { setHasFixedSize(true) }
 
-        // Init Cursor Pagination
-        cursorPagination = ""
+//        // Init Cursor Pagination
+//        cursorPagination = ""
 
         // Init Streams
         streams = mutableListOf()
@@ -66,6 +60,7 @@ class StreamsActivity : AppCompatActivity() {
         // Init Adapter
         streamListAdapter = StreamsListAdapter(mutableListOf())
         recyclerView.adapter = streamListAdapter
+
     }
 
 
@@ -77,23 +72,33 @@ class StreamsActivity : AppCompatActivity() {
         GlobalScope.launch {
             // DownLoading Streams and Cursor
             val response = loadStreams()
+            val data = response?.data as MutableList<Stream>
 
-//            streams = response?.data as MutableList<Stream>
-            streams.addAll(response?.data as MutableList<Stream>)
+            val itemCount = streamListAdapter.itemCount
+
+//            streams.addAll(response?.data as MutableList<Stream>)
+            streams.addAll(data)
             cursor = response?.pagination as Cursor
-            cursorPagination = cursor.toString()
+            cursorPagination = cursor.cursor
+
 
             Log.i("STREAMS", streams.toString())
             Log.i("CURSOR", cursor.toString())
+            Log.i("ITEM-COUNT", "$itemCount")
+
+            streamListAdapter = StreamsListAdapter((streams))
+            streamListAdapter.notifyItemRangeInserted(itemCount, data.size)
+
+            Log.i("ITEM-COUNT-2","${streamListAdapter.itemCount}")
+
+
 
             // Loading Streams in RecyclerView
             runOnUiThread {
-                val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-                streamListAdapter = StreamsListAdapter(streams)
-//                layoutManager.onAdapterChanged(recyclerView.adapter, streamListAdapter)
                 recyclerView.adapter = streamListAdapter
-
+                recyclerView.adapter?.notifyItemRangeInserted(itemCount, data.size)
             }
+
         }
 
     }
@@ -110,41 +115,16 @@ class StreamsActivity : AppCompatActivity() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-//                getStreams()
-
-                val itemCount = recyclerView.layoutManager?.itemCount
-                val childCount = recyclerView.layoutManager?.childCount
 
                 val lastVisibleItem = layoutManager.findLastCompletelyVisibleItemPosition()
-                val a = layoutManager.childCount
                 val itemCountAdapter = recyclerView.adapter?.itemCount
-                val b = recyclerView.childCount
 
-
-//                Log.i("ITEM COUNT", itemCount.toString())
-//                Log.i("CHILD COUNT", childCount.toString())
-//                Log.i("LAST VISIBLE ITEM", lastVisibleItem.toString())
-//                Log.i("A", a.toString())
-//                Log.i("ITEM COUNT ADAPTER", itemCountAdapter.toString())
-//                Log.i("B", b.toString())
-//                Log.i("swipeRefreshLayout", swipeRefreshLayout.childCount.toString())
-//                Log.i("CURSOR", cursorPagination)
                 if (itemCountAdapter?.minus(lastVisibleItem) == 1) {
                     recyclerView.post {
                         getStreams()
-
                     }
                 }
-//                Log.i("DX", dx.toString())
-//                Log.i("DY", dy.toString())
-//                Log.i("T", t.toString())
 
-
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-//                getStreams()
             }
 
         })
