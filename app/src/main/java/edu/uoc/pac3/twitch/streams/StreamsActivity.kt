@@ -47,9 +47,6 @@ class StreamsActivity : AppCompatActivity() {
 
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
-//        // Init Cursor Pagination
-//        cursorPagination = ""
-
         // Init Streams
         streams = mutableListOf()
 
