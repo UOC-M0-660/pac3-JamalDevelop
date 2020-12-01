@@ -16,6 +16,12 @@ data class Stream(
 )
 
 @Serializable
+data class Cursor(
+    @SerialName("cursor") val cursor: String? = null,
+)
+
+@Serializable
 data class StreamsResponse(
     @SerialName("data") val data: List<Stream>? = null,
+    @SerialName("pagination") val pagination: Cursor? = null,
 )

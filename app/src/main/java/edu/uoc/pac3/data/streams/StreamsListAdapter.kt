@@ -30,7 +30,7 @@ class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView
         // Load imageThumbnail
         val thumbnailUrl = streams[position].thumbnail_url
             ?.replace("{width}", "1024")
-            ?.replace("{height}", "850")
+            ?.replace("{height}", "840")
 
         Glide.with(holder.vhThumbnailUrl.context)
             .load(thumbnailUrl)

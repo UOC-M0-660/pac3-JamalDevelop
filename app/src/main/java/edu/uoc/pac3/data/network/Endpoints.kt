@@ -18,4 +18,5 @@ object Endpoints {
     const val streams = "$twitchBaseUrl/streams"
     const val users = "$twitchBaseUrl/users"
 
+
 }
