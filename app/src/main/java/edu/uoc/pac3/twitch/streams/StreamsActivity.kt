@@ -45,7 +45,7 @@ class StreamsActivity : AppCompatActivity() {
     // Init RecyclerView
     private fun initRecyclerView() {
 
-        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply { setHasFixedSize(true) }
+        recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
 
 //        // Init Cursor Pagination
 //        cursorPagination = ""
@@ -66,37 +66,22 @@ class StreamsActivity : AppCompatActivity() {
 
     private fun getStreams() {
 
-        var cursor: Cursor // Cursor pagination
-
-
         GlobalScope.launch {
-            // DownLoading Streams and Cursor
-            val response = loadStreams()
-            val data = response?.data as MutableList<Stream>
 
-            val itemCount = streamListAdapter.itemCount
+            val response = loadStreams()  // DownLoading Data Streams and Pagination
+            val data = response?.data as MutableList<Stream> // Data streams
+            val pagination = response?.pagination as Cursor // Cursor pagination
 
-//            streams.addAll(response?.data as MutableList<Stream>)
-            streams.addAll(data)
-            cursor = response?.pagination as Cursor
-            cursorPagination = cursor.cursor
-
+            streams.addAll(data) // Add data streams to stream list
+            cursorPagination = pagination.cursor
 
             Log.i("STREAMS", streams.toString())
-            Log.i("CURSOR", cursor.toString())
-            Log.i("ITEM-COUNT", "$itemCount")
-
-            streamListAdapter = StreamsListAdapter((streams))
-            streamListAdapter.notifyItemRangeInserted(itemCount, data.size)
-
-            Log.i("ITEM-COUNT-2","${streamListAdapter.itemCount}")
-
-
+            Log.i("CURSOR", pagination.toString())
+            Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
 
             // Loading Streams in RecyclerView
             runOnUiThread {
-                recyclerView.adapter = streamListAdapter
-                recyclerView.adapter?.notifyItemRangeInserted(itemCount, data.size)
+                streamListAdapter.setStreams(streams)
             }
 
         }
@@ -109,7 +94,7 @@ class StreamsActivity : AppCompatActivity() {
     }
 
 
-    // Load Next 20 Streams
+    // Load Next OAuthConstants.FIRST Streams
     private fun getNextStreams() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 

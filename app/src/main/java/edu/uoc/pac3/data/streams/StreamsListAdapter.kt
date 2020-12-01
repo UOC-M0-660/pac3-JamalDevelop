@@ -11,6 +11,12 @@ import com.bumptech.glide.Glide
 import edu.uoc.pac3.R
 
 class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView.Adapter<StreamsListAdapter.ViewHolder>() {
+    
+    // Reloads the RecyclerView with new adapter data
+    fun setStreams(streams: MutableList<Stream>){
+        this.streams = streams
+        notifyDataSetChanged()
+    }
 
     // Creates View Holder for re-use
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StreamsListAdapter.ViewHolder {
