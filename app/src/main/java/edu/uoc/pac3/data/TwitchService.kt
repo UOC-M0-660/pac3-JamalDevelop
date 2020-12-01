@@ -1,19 +1,14 @@
 package edu.uoc.pac3.data
 
-import android.R
-import android.content.Context
 import android.util.Log
 import edu.uoc.pac3.data.network.Endpoints
-import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import edu.uoc.pac3.data.oauth.OAuthTokensResponse
 import edu.uoc.pac3.data.oauth.UnauthorizedException
 import edu.uoc.pac3.data.streams.StreamsResponse
 import edu.uoc.pac3.data.user.User
-import edu.uoc.pac3.oauth.OAuthActivity
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlin.coroutines.coroutineContext
 
 /**
  * Created by alex on 24/10/2020.
@@ -42,15 +37,30 @@ class TwitchApiService(private val httpClient: HttpClient) {
     @Throws(UnauthorizedException::class)
     suspend fun getStreams(cursor: String? = null): StreamsResponse? {
 //        TODO("Get Streams from Twitch")
-        val response = httpClient.get<StreamsResponse>(Endpoints.streams) {
-            headers{
-                append("Client-Id", OAuthConstants.CLIENT_ID)
+        var response = Any()
+
+        if (cursor.isNullOrEmpty()) {
+            response = httpClient.get<StreamsResponse>(Endpoints.streams) {
+                headers {
+                    append("Client-Id", OAuthConstants.CLIENT_ID)
+                }
+                parameter("first", OAuthConstants.FIRST)
+            }
+        } else {
+            response = httpClient.get<StreamsResponse>(Endpoints.streams) {
+                headers {
+                    append("Client-Id", OAuthConstants.CLIENT_ID)
+                }
+                parameter("first", OAuthConstants.FIRST)
+                parameter("after", cursor)
             }
         }
-//        TODO("Support Pagination")
+
+//        // TODO("Support Pagination")
+//        // TODO("Get Streams from Twitch")
 
         return response
-//        // TODO("Get Streams from Twitch")
+
     }
 
     /// Gets Current Authorized User on Twitch
@@ -63,7 +73,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
             }
         }
 
-        return  response
+        return response
     }
 
     /// Gets Current Authorized User on Twitch

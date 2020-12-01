@@ -8,10 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import edu.uoc.pac3.R
 
 class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView.Adapter<StreamsListAdapter.ViewHolder>() {
+    
+    // Reloads the RecyclerView with new adapter data
+    fun setStreams(streams: MutableList<Stream>){
+        this.streams = streams
+        notifyDataSetChanged()
+    }
 
     // Creates View Holder for re-use
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StreamsListAdapter.ViewHolder {
@@ -30,13 +35,15 @@ class StreamsListAdapter(private var streams: MutableList<Stream>) :RecyclerView
         // Load imageThumbnail
         val thumbnailUrl = streams[position].thumbnail_url
             ?.replace("{width}", "1024")
-            ?.replace("{height}", "850")
+            ?.replace("{height}", "840")
 
         Glide.with(holder.vhThumbnailUrl.context)
             .load(thumbnailUrl)
             .into(holder.vhThumbnailUrl)
 
     }
+
+
 
     // Return number of Streams
     override fun getItemCount(): Int {
