@@ -67,6 +67,7 @@ class StreamsActivity : AppCompatActivity() {
 
     private fun getStreams() {
 
+        // Run in background
         GlobalScope.launch {
 
             val response = loadStreams()  // DownLoading Data Streams and Pagination
