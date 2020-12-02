@@ -1,7 +1,10 @@
 package edu.uoc.pac3.twitch.streams
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +15,7 @@ import edu.uoc.pac3.data.streams.Cursor
 import edu.uoc.pac3.data.streams.Stream
 import edu.uoc.pac3.data.streams.StreamsListAdapter
 import edu.uoc.pac3.data.streams.StreamsResponse
+import edu.uoc.pac3.twitch.profile.ProfileActivity
 import kotlinx.android.synthetic.main.activity_streams.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -117,6 +121,28 @@ class StreamsActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             getStreams()
             swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+
+    // Options Menu
+    // Inflate Menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // On options item selected
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId){
+
+        R.id.item_profile -> {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        else -> {
+            super.onOptionsItemSelected(item)
         }
     }
 
