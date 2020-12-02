@@ -34,8 +34,9 @@ class SessionManager(context: Context) {
     fun clearAccessToken() {
         // TODO("Clear Access Token")
         sharedPreferences.edit().putString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, "").clear().apply()
-//        sharedPreferences.edit().remove(OAuthConstants.ACCESS_TOKEN_PREFERENCES).apply()
+        sharedPreferences.edit().remove(OAuthConstants.ACCESS_TOKEN_PREFERENCES).apply()
         Log.d(TAG, "accessToken cleared!")
+        Log.d(TAG, "accessToken is --> ${getAccessToken()}")
     }
 
     fun getRefreshToken(): String? {
@@ -52,8 +53,9 @@ class SessionManager(context: Context) {
     fun clearRefreshToken() {
         // TODO("Clear Refresh Token")
         sharedPreferences.edit().putString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, "").clear().apply()
-//        sharedPreferences.edit().remove(OAuthConstants.REFRESH_TOKEN_PREFERENCES).apply()
+        sharedPreferences.edit().remove(OAuthConstants.REFRESH_TOKEN_PREFERENCES).apply()
         Log.d(TAG, "refreshToken cleared!")
+        Log.d(TAG, "refreshToken is --> ${getRefreshToken()}")
     }
 
 }

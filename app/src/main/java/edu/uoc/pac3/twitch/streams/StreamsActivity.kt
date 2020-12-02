@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.pac3.R
@@ -68,25 +69,26 @@ class StreamsActivity : AppCompatActivity() {
     private fun getStreams() {
 
         // Run in background
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
-            val response = loadStreams()  // DownLoading Data Streams and Pagination
-            val data = response?.data as MutableList<Stream> // Data streams
-            val pagination = response?.pagination as Cursor // Cursor pagination
+                val response = loadStreams()  // DownLoading Data Streams and Pagination
+                val data = response?.data as MutableList<Stream> // Data streams
+                val pagination = response?.pagination as Cursor // Cursor pagination
 
-            streams.addAll(data) // Add data streams to stream list
-            cursorPagination = pagination.cursor
+                streams.addAll(data) // Add data streams to stream list
+                cursorPagination = pagination.cursor
 
-            Log.i("STREAMS", streams.toString())
-            Log.i("CURSOR", pagination.toString())
-            Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
+                Log.i("STREAMS", streams.toString())
+                Log.i("CURSOR", pagination.toString())
+                Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
 
-            // Loading Streams in RecyclerView
-            runOnUiThread {
-                streamListAdapter.setStreams(streams)
-            }
+                // Loading Streams in RecyclerView
+                runOnUiThread {
+                    streamListAdapter.setStreams(streams)
+                }
 
         }
+
 
     }
 

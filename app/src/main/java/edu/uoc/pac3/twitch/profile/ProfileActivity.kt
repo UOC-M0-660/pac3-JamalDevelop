@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputEditText
 import edu.uoc.pac3.LaunchActivity
@@ -14,6 +15,7 @@ import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import edu.uoc.pac3.data.user.User
+import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -47,7 +49,7 @@ class ProfileActivity : AppCompatActivity() {
         userDescriptionEditText = findViewById(R.id.userDescriptionEditText)
 
         // Run in background
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
             val response = loadUser()
             val data = response?.data?.get(0)
@@ -71,6 +73,7 @@ class ProfileActivity : AppCompatActivity() {
 
         }
 
+
     }
 
 
@@ -86,7 +89,7 @@ class ProfileActivity : AppCompatActivity() {
         updateDescriptionButton.setOnClickListener {
 
             // Run in background
-            GlobalScope.launch {
+            lifecycleScope.launch {
 
                 try {
                     updateDescription() // Update description
@@ -110,6 +113,7 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 }
 
+
             }
 
         }
@@ -127,20 +131,15 @@ class ProfileActivity : AppCompatActivity() {
     private fun initLogoutButton() {
 
         logoutButton.setOnClickListener {
-            GlobalScope.launch {
+            lifecycleScope.launch {
 
-                val token = SessionManager(it.context).getAccessToken()
-                logout(token)
+                SessionManager(it.context).clearAccessToken() // Clear AccessToken
+                SessionManager(it.context).clearRefreshToken() // Clear RefreshToken
 
-                SessionManager(it.context).clearAccessToken()
-                SessionManager(it.context).clearRefreshToken()
-
-
-                runOnUiThread {
+                runOnUiThread { // Return to login activity
                     val intent = Intent(it.context, LaunchActivity::class.java)
                     it.context.startActivity(intent)
                 }
-
 
             }
         }
