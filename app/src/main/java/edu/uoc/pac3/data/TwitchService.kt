@@ -58,6 +58,8 @@ class TwitchApiService(private val httpClient: HttpClient) {
             }
         }
 
+        Log.d(TAG, "getStreams() from Twitch")
+
         // TODO("Get Streams from Twitch")
         return response
     }
@@ -72,6 +74,8 @@ class TwitchApiService(private val httpClient: HttpClient) {
             }
             parameter("scopes", OAuthConstants.SCOPES)
         }
+
+        Log.d(TAG, "getUser() from Twitch")
 
         return response
     }
@@ -88,6 +92,26 @@ class TwitchApiService(private val httpClient: HttpClient) {
             parameter("description", description)
         }
 
+        Log.d(TAG, OAuthConstants.UPDATE_SUCCESS)
+
         return response
     }
+
+    /// Gets Current Authorized User on Twitch
+    @Throws(UnauthorizedException::class)
+    suspend fun logoutUser(accessToken: String?): OAuthTokensResponse? {
+//        TODO("Update User Description on Twitch")
+        val response = httpClient.post<OAuthTokensResponse>(Endpoints.revoke) {
+            parameter("client_id", OAuthConstants.CLIENT_ID)
+            parameter("token", accessToken)
+        }
+
+        Log.d(TAG, "User logout successfully!")
+
+        return response
+    }
+
+
+
+
 }

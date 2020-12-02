@@ -11,6 +11,7 @@ object Endpoints {
     const val authorization = "$oauthBaseUrl/authorize"
     const val tokens = "$oauthBaseUrl/token"
     const val validate = "$oauthBaseUrl/validate"
+    const val revoke = "$oauthBaseUrl/revoke"
 
     // Twitch API Endpoints
     private const val twitchBaseUrl = "https://api.twitch.tv/helix"
