@@ -20,10 +20,10 @@ Escribe aquí tu respuesta
 #### Explica el uso de paginación en la API de Twitch.
 
 ##### ¿Qué ventajas ofrece la paginación a la aplicación?
-Escribe aquí tu respuesta
+Principalmente agilidad. Una mejor gestión de memoria ya que sólo carga un número reducido de datos, normalmente los que aparecen en el área visible en primera instancia.
 
 ##### ¿Qué problemas puede tener la aplicación si no se utiliza paginación?
-Escribe aquí tu respuesta
+Puede quedarse corta y cargar solo los 20 primeros streams o puede bloquearse al quedarse sin memoria si se traen muchos para pintarlos en el recyclerView.
 
 ##### Lista algunos ejemplos de aplicaciones que usan paginación.
-Escribe aquí tu respuesta
+Facebook, Twitter, Instagram…las redes sociales en general son un buen ejemplo… aplicaciones que están en constante crecimiento y con información actualizada en tiempo real. 
