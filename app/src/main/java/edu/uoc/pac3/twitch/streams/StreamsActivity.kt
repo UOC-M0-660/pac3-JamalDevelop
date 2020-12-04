@@ -70,6 +70,8 @@ class StreamsActivity : AppCompatActivity() {
 
     private fun getStreams() {
 
+        swipeRefreshLayout.isRefreshing = true
+
         // Run in background
         lifecycleScope.launch {
 
@@ -87,6 +89,7 @@ class StreamsActivity : AppCompatActivity() {
                 // Loading Streams in RecyclerView
                 runOnUiThread {
                     streamListAdapter.setStreams(streams)
+                    swipeRefreshLayout.isRefreshing = false
                 }
 
         }
@@ -132,8 +135,6 @@ class StreamsActivity : AppCompatActivity() {
             streamListAdapter.setStreams(streams)
             cursorPagination = null
             getStreams()
-
-            swipeRefreshLayout.isRefreshing = false
 
         }
     }
