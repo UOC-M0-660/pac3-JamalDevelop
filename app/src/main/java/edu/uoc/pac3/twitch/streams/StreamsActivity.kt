@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,6 +47,7 @@ class StreamsActivity : AppCompatActivity() {
         // Configure SwipeRefreshLayout
         refreshSwipeStreams()
     }
+
 
     // Init RecyclerView
     private fun initRecyclerView() {
@@ -92,6 +94,7 @@ class StreamsActivity : AppCompatActivity() {
 
     }
 
+
     // Load Streams
     private suspend fun loadStreams(): StreamsResponse? {
         return TwitchApiService(Network.createHttpClient(this)).getStreams(cursorPagination)
@@ -119,11 +122,19 @@ class StreamsActivity : AppCompatActivity() {
         })
     }
 
+
     // Refresh SwipeRefreshLayout with Streams
     private fun refreshSwipeStreams() {
         swipeRefreshLayout.setOnRefreshListener {
+
+            // Clear stream list, the adapter and Pagination Cursor to refresh
+            streams.clear()
+            streamListAdapter.setStreams(streams)
+            cursorPagination = null
             getStreams()
+
             swipeRefreshLayout.isRefreshing = false
+
         }
     }
 
@@ -134,6 +145,7 @@ class StreamsActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
 
     // On options item selected
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId){

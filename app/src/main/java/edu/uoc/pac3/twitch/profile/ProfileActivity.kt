@@ -17,7 +17,6 @@ import edu.uoc.pac3.data.oauth.OAuthConstants
 import edu.uoc.pac3.data.user.User
 import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.android.synthetic.main.activity_profile.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ProfileActivity : AppCompatActivity() {
@@ -139,6 +138,7 @@ class ProfileActivity : AppCompatActivity() {
                 runOnUiThread { // Return to login activity
                     val intent = Intent(it.context, LaunchActivity::class.java)
                     it.context.startActivity(intent)
+                    finish()
                 }
 
             }

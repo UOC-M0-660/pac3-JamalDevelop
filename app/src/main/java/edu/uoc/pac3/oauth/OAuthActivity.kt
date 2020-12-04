@@ -1,5 +1,6 @@
 package edu.uoc.pac3.oauth
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,16 +16,15 @@ import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Endpoints
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
-import edu.uoc.pac3.data.oauth.OAuthTokensResponse
+import edu.uoc.pac3.twitch.streams.StreamsActivity
 import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class OAuthActivity : AppCompatActivity() {
 
     private val TAG = "OAuthActivity"
-    private var uniqueState : String = ""
+    private var uniqueState: String = ""
 
     //    private val uniqueState = UUID.randomUUID().toString()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +33,7 @@ class OAuthActivity : AppCompatActivity() {
         launchOAuthAuthorization()
     }
 
+    // Prepare URL
     fun buildOAuthUri(): Uri {
         // TODO: Create URI
         uniqueState = UUID.randomUUID().toString()
@@ -48,9 +49,9 @@ class OAuthActivity : AppCompatActivity() {
         return uri
     }
 
+    // Launch OAuth Authorization
     private fun launchOAuthAuthorization() {
-        //  Create URI
-        val uri = buildOAuthUri()
+        val uri = buildOAuthUri() //  Create URI
 
         // Set webView Redirect Listener
         webView.webViewClient = object : WebViewClient() {
@@ -81,8 +82,6 @@ class OAuthActivity : AppCompatActivity() {
         }
 
 
-
-
         // Load OAuth Uri
         webView.settings.javaScriptEnabled = true
         webView.loadUrl(uri.toString())
@@ -94,28 +93,30 @@ class OAuthActivity : AppCompatActivity() {
 
         // Show Loading Indicator
         progressBar.visibility = View.VISIBLE
+        webView.visibility = View.INVISIBLE
 
         lifecycleScope.launch {
-                val tokens =
-                    TwitchApiService(Network.createHttpClient(applicationContext)).getTokens(
-                        authorizationCode
-                    )
-                Log.d(
-                    "OAuth-TOKENS",
-                    "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
+            val tokens =
+                TwitchApiService(Network.createHttpClient(applicationContext)).getTokens(
+                    authorizationCode
                 )
+            Log.d(
+                "OAuth-TOKENS",
+                "Here is the TOKENS! ${tokens?.accessToken} and ${tokens?.refreshToken}"
+            )
 
-                //save tokens
-                SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
-                SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
+            //save tokens
+            SessionManager(this@OAuthActivity).saveAccessToken(tokens?.accessToken.toString())
+            SessionManager(this@OAuthActivity).saveRefreshToken(tokens?.refreshToken.toString())
 
-//                progressBar.visibility = View.INVISIBLE
-                runOnUiThread{
-                    progressBar.visibility = View.INVISIBLE
-                }
+
+            runOnUiThread {
+                val intent = Intent(this@OAuthActivity, StreamsActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
 
         }
-
 
 
         // TODO: Create Twitch Service

@@ -17,6 +17,8 @@ class SessionManager(context: Context) {
     private val sharedPreferences = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
 
     fun isUserAvailable(): Boolean {
+        Log.i(TAG, "ACCESS-TOKEN-AVAILABLE --> ${(getAccessToken()?.isNotEmpty() ?:false)}")
+        Log.i(TAG, "REFRESH-TOKEN-AVAILABLE --> ${(getRefreshToken()?.isNotEmpty() ?:false)}")
         return (getAccessToken()?.isNotEmpty() ?:false) && (getRefreshToken()?.isNotEmpty() ?: false)
     }
 
