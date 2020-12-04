@@ -1,8 +1,13 @@
 package edu.uoc.pac3.twitch.streams
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import edu.uoc.pac3.R
@@ -12,6 +17,7 @@ import edu.uoc.pac3.data.streams.Cursor
 import edu.uoc.pac3.data.streams.Stream
 import edu.uoc.pac3.data.streams.StreamsListAdapter
 import edu.uoc.pac3.data.streams.StreamsResponse
+import edu.uoc.pac3.twitch.profile.ProfileActivity
 import kotlinx.android.synthetic.main.activity_streams.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -42,6 +48,7 @@ class StreamsActivity : AppCompatActivity() {
         refreshSwipeStreams()
     }
 
+
     // Init RecyclerView
     private fun initRecyclerView() {
 
@@ -63,27 +70,30 @@ class StreamsActivity : AppCompatActivity() {
 
     private fun getStreams() {
 
-        GlobalScope.launch {
+        // Run in background
+        lifecycleScope.launch {
 
-            val response = loadStreams()  // DownLoading Data Streams and Pagination
-            val data = response?.data as MutableList<Stream> // Data streams
-            val pagination = response?.pagination as Cursor // Cursor pagination
+                val response = loadStreams()  // DownLoading Data Streams and Pagination
+                val data = response?.data as MutableList<Stream> // Data streams
+                val pagination = response?.pagination as Cursor // Cursor pagination
 
-            streams.addAll(data) // Add data streams to stream list
-            cursorPagination = pagination.cursor
+                streams.addAll(data) // Add data streams to stream list
+                cursorPagination = pagination.cursor
 
-            Log.i("STREAMS", streams.toString())
-            Log.i("CURSOR", pagination.toString())
-            Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
+                Log.i("STREAMS", streams.toString())
+                Log.i("CURSOR", pagination.toString())
+                Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
 
-            // Loading Streams in RecyclerView
-            runOnUiThread {
-                streamListAdapter.setStreams(streams)
-            }
+                // Loading Streams in RecyclerView
+                runOnUiThread {
+                    streamListAdapter.setStreams(streams)
+                }
 
         }
 
+
     }
+
 
     // Load Streams
     private suspend fun loadStreams(): StreamsResponse? {
@@ -112,11 +122,42 @@ class StreamsActivity : AppCompatActivity() {
         })
     }
 
+
     // Refresh SwipeRefreshLayout with Streams
     private fun refreshSwipeStreams() {
         swipeRefreshLayout.setOnRefreshListener {
+
+            // Clear stream list, the adapter and Pagination Cursor to refresh
+            streams.clear()
+            streamListAdapter.setStreams(streams)
+            cursorPagination = null
             getStreams()
+
             swipeRefreshLayout.isRefreshing = false
+
+        }
+    }
+
+
+    // Options Menu
+    // Inflate Menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+
+    // On options item selected
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId){
+
+        R.id.item_profile -> {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+            true
+        }
+
+        else -> {
+            super.onOptionsItemSelected(item)
         }
     }
 

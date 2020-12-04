@@ -36,9 +36,11 @@ class TwitchApiService(private val httpClient: HttpClient) {
     /// Gets Streams on Twitch
     @Throws(UnauthorizedException::class)
     suspend fun getStreams(cursor: String? = null): StreamsResponse? {
-//        TODO("Get Streams from Twitch")
+
+        //TODO("Get Streams from Twitch")
         var response = Any()
 
+        // TODO("Support Pagination")
         if (cursor.isNullOrEmpty()) {
             response = httpClient.get<StreamsResponse>(Endpoints.streams) {
                 headers {
@@ -56,11 +58,10 @@ class TwitchApiService(private val httpClient: HttpClient) {
             }
         }
 
-//        // TODO("Support Pagination")
-//        // TODO("Get Streams from Twitch")
+        Log.d(TAG, "getStreams() from Twitch")
 
+        // TODO("Get Streams from Twitch")
         return response
-
     }
 
     /// Gets Current Authorized User on Twitch
@@ -69,9 +70,12 @@ class TwitchApiService(private val httpClient: HttpClient) {
 //        TODO("Get User from Twitch")
         val response = httpClient.get<User>(Endpoints.users) {
             headers {
-                append("Client_Id", OAuthConstants.CLIENT_ID)
+                append("Client-Id", OAuthConstants.CLIENT_ID)
             }
+            parameter("scopes", OAuthConstants.SCOPES)
         }
+
+        Log.d(TAG, "getUser() from Twitch")
 
         return response
     }
@@ -79,6 +83,35 @@ class TwitchApiService(private val httpClient: HttpClient) {
     /// Gets Current Authorized User on Twitch
     @Throws(UnauthorizedException::class)
     suspend fun updateUserDescription(description: String): User? {
-        TODO("Update User Description on Twitch")
+//        TODO("Update User Description on Twitch")
+        val response = httpClient.put<User>(Endpoints.users) {
+            headers {
+                append("Client-Id", OAuthConstants.CLIENT_ID)
+            }
+            parameter("scopes", OAuthConstants.SCOPES)
+            parameter("description", description)
+        }
+
+        Log.d(TAG, OAuthConstants.UPDATE_SUCCESS)
+
+        return response
     }
+
+    /// Gets Current Authorized User on Twitch
+    @Throws(UnauthorizedException::class)
+    suspend fun logoutUser(accessToken: String?): OAuthTokensResponse? {
+//        TODO("Update User Description on Twitch")
+        val response = httpClient.post<OAuthTokensResponse>(Endpoints.revoke) {
+            parameter("client_id", OAuthConstants.CLIENT_ID)
+            parameter("token", accessToken)
+        }
+
+        Log.d(TAG, "User logout successfully!")
+
+        return response
+    }
+
+
+
+
 }

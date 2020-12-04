@@ -17,6 +17,8 @@ class SessionManager(context: Context) {
     private val sharedPreferences = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
 
     fun isUserAvailable(): Boolean {
+        Log.i(TAG, "ACCESS-TOKEN-AVAILABLE --> ${(getAccessToken()?.isNotEmpty() ?:false)}")
+        Log.i(TAG, "REFRESH-TOKEN-AVAILABLE --> ${(getRefreshToken()?.isNotEmpty() ?:false)}")
         return (getAccessToken()?.isNotEmpty() ?:false) && (getRefreshToken()?.isNotEmpty() ?: false)
     }
 
@@ -33,8 +35,10 @@ class SessionManager(context: Context) {
 
     fun clearAccessToken() {
         // TODO("Clear Access Token")
-        sharedPreferences.edit().putString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, getAccessToken()).clear().apply()
+        sharedPreferences.edit().putString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, "").clear().apply()
+        sharedPreferences.edit().remove(OAuthConstants.ACCESS_TOKEN_PREFERENCES).apply()
         Log.d(TAG, "accessToken cleared!")
+        Log.d(TAG, "accessToken is --> ${getAccessToken()}")
     }
 
     fun getRefreshToken(): String? {
@@ -50,8 +54,10 @@ class SessionManager(context: Context) {
 
     fun clearRefreshToken() {
         // TODO("Clear Refresh Token")
-        sharedPreferences.edit().putString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, getRefreshToken()).clear().apply()
+        sharedPreferences.edit().putString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, "").clear().apply()
+        sharedPreferences.edit().remove(OAuthConstants.REFRESH_TOKEN_PREFERENCES).apply()
         Log.d(TAG, "refreshToken cleared!")
+        Log.d(TAG, "refreshToken is --> ${getRefreshToken()}")
     }
 
 }
