@@ -15,6 +15,7 @@ import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
 import edu.uoc.pac3.data.user.User
+import edu.uoc.pac3.twitch.streams.StreamsActivity
 import kotlinx.android.synthetic.main.activity_oauth.*
 import kotlinx.android.synthetic.main.activity_profile.*
 import kotlinx.coroutines.launch
@@ -128,22 +129,26 @@ class ProfileActivity : AppCompatActivity() {
 
     // Initialization for the LOGOUT button
     private fun initLogoutButton() {
-
         logoutButton.setOnClickListener {
-            lifecycleScope.launch {
-
-                SessionManager(it.context).clearAccessToken() // Clear AccessToken
-                SessionManager(it.context).clearRefreshToken() // Clear RefreshToken
-
-                runOnUiThread { // Return to login activity
-                    val intent = Intent(it.context, LaunchActivity::class.java)
-                    it.context.startActivity(intent)
-                    finish()
-                }
-
-            }
+            logoutReturnLogin()
         }
+    }
 
+    // Logout and return to Login Activity
+    private fun logoutReturnLogin(){
+        lifecycleScope.launch {
+
+            SessionManager(this@ProfileActivity).clearAccessToken() // Clear AccessToken
+            SessionManager(this@ProfileActivity).clearRefreshToken() // Clear RefreshToken
+
+            // Return to login activity
+            runOnUiThread {
+                val intent = Intent(this@ProfileActivity, LaunchActivity::class.java)
+                this@ProfileActivity.startActivity(intent)
+                finish()
+            }
+
+        }
     }
 
     private suspend fun logout(token: String?) {

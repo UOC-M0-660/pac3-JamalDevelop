@@ -5,22 +5,26 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import edu.uoc.pac3.LaunchActivity
 import edu.uoc.pac3.R
+import edu.uoc.pac3.data.SessionManager
 import edu.uoc.pac3.data.TwitchApiService
 import edu.uoc.pac3.data.network.Network
+import edu.uoc.pac3.data.oauth.OAuthTokensResponse
 import edu.uoc.pac3.data.streams.Cursor
 import edu.uoc.pac3.data.streams.Stream
 import edu.uoc.pac3.data.streams.StreamsListAdapter
 import edu.uoc.pac3.data.streams.StreamsResponse
 import edu.uoc.pac3.twitch.profile.ProfileActivity
+import io.ktor.client.features.*
 import kotlinx.android.synthetic.main.activity_streams.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class StreamsActivity : AppCompatActivity() {
 
@@ -75,7 +79,10 @@ class StreamsActivity : AppCompatActivity() {
         // Run in background
         lifecycleScope.launch {
 
-                val response = loadStreams()  // DownLoading Data Streams and Pagination
+            val response: StreamsResponse?
+
+            try {
+                response = loadStreams()  // DownLoading Data Streams and Pagination
                 val data = response?.data as MutableList<Stream> // Data streams
                 val pagination = response?.pagination as Cursor // Cursor pagination
 
@@ -84,7 +91,7 @@ class StreamsActivity : AppCompatActivity() {
 
                 Log.i("STREAMS", streams.toString())
                 Log.i("CURSOR", pagination.toString())
-                Log.i("ITEM-COUNT-NEW","${streamListAdapter.itemCount}")
+                Log.i("ITEM-COUNT-NEW", "${streamListAdapter.itemCount}")
 
                 // Loading Streams in RecyclerView
                 runOnUiThread {
@@ -92,8 +99,12 @@ class StreamsActivity : AppCompatActivity() {
                     swipeRefreshLayout.isRefreshing = false
                 }
 
-        }
+            } catch (e: ClientRequestException) {
+                // Update tokens
+                getNewTokens()
+            }
 
+        }
 
     }
 
@@ -129,13 +140,11 @@ class StreamsActivity : AppCompatActivity() {
     // Refresh SwipeRefreshLayout with Streams
     private fun refreshSwipeStreams() {
         swipeRefreshLayout.setOnRefreshListener {
-
             // Clear stream list, the adapter and Pagination Cursor to refresh
             streams.clear()
             streamListAdapter.setStreams(streams)
             cursorPagination = null
             getStreams()
-
         }
     }
 
@@ -149,7 +158,7 @@ class StreamsActivity : AppCompatActivity() {
 
 
     // On options item selected
-    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId){
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
 
         R.id.item_profile -> {
             val intent = Intent(this, ProfileActivity::class.java)
@@ -161,5 +170,64 @@ class StreamsActivity : AppCompatActivity() {
             super.onOptionsItemSelected(item)
         }
     }
+
+    // Get new tokens
+    private fun getNewTokens() {
+
+        lifecycleScope.launch {
+            var newTokens: OAuthTokensResponse? = null
+            try {
+                newTokens = loadNewTokens()
+                Log.d(
+                    TAG,
+                    "-NEW TOKEN- is ${newTokens?.accessToken} and -NEW REFRESH TOKEN- is ${newTokens?.refreshToken}"
+                )
+
+                //Replace tokens
+                saveTokens(newTokens)
+
+            } catch (e: ClientRequestException) {
+                Log.d(TAG, "Error getting new tokens")
+            } finally {
+                // Reload Streams or Return Login Ativity
+                if (newTokens == null) {
+                    // Clear Tokens and return Login page
+                    clearTokens()
+                    goToLaunchActivity()
+                } else {
+                    goToLaunchActivity()
+                }
+            }
+
+        }
+
+    }
+
+
+    // Load new Tokens
+    private suspend fun loadNewTokens(): OAuthTokensResponse? {
+        return TwitchApiService(Network.createHttpClient(this)).getNewTokens(SessionManager(this).getRefreshToken())
+    }
+
+    // Clear tokens
+    private fun clearTokens() {
+        SessionManager(this).clearAccessToken() // Clear AccessToken
+        SessionManager(this).clearRefreshToken() // Clear RefreshToken
+    }
+
+    //Replace tokens
+    private fun saveTokens(tokens: OAuthTokensResponse?) {
+        SessionManager(this).saveAccessToken(tokens?.accessToken.toString())
+        SessionManager(this).saveRefreshToken(tokens?.refreshToken.toString())
+    }
+
+    private fun goToLaunchActivity() {
+        runOnUiThread { // Return to login activity
+            val intent = Intent(this, LaunchActivity::class.java)
+            this.startActivity(intent)
+            finish()
+        }
+    }
+
 
 }

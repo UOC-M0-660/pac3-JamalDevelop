@@ -38,9 +38,12 @@ class TwitchApiService(private val httpClient: HttpClient) {
     suspend fun getStreams(cursor: String? = null): StreamsResponse? {
 
         //TODO("Get Streams from Twitch")
-        var response = Any()
+        var response : StreamsResponse? = null
 
         // TODO("Support Pagination")
+//        try{
+
+
         if (cursor.isNullOrEmpty()) {
             response = httpClient.get<StreamsResponse>(Endpoints.streams) {
                 headers {
@@ -57,6 +60,13 @@ class TwitchApiService(private val httpClient: HttpClient) {
                 parameter("after", cursor)
             }
         }
+
+//        } catch (e: Exception) {
+//            Log.e(TAG, "ERROR AQUIIIIIIIIIIIIIII")
+//            Log.e(TAG, e.toString())
+//            Log.e(TAG, e.cause.toString())
+//            Log.e(TAG, e.message)
+//        }
 
         Log.d(TAG, "getStreams() from Twitch")
 
@@ -108,6 +118,21 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
         Log.d(TAG, "User logout successfully!")
 
+        return response
+    }
+
+
+    /// Gets new Access and Refresh Tokens on Twitch by RefreshToken
+    suspend fun getNewTokens(refreshToken: String?): OAuthTokensResponse? {
+
+        val response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
+            parameter("client_id", OAuthConstants.CLIENT_ID)
+            parameter("client_secret", OAuthConstants.CLIENT_SECRET)
+            parameter("refresh_token", refreshToken)
+            parameter("grant_type", "refresh_token")
+        }
+
+        Log.d(TAG, "Access Token new: ${response.accessToken}. Refresh Token new: ${response.refreshToken}")
         return response
     }
 
