@@ -45,7 +45,6 @@ class StreamsActivity : AppCompatActivity() {
 
         // TODO: Get Streams
         getStreams()
-
         getNextStreams()
 
         // Configure SwipeRefreshLayout
@@ -101,8 +100,7 @@ class StreamsActivity : AppCompatActivity() {
 
             } catch (e: ClientRequestException) {
                 // Update tokens
-//                getNewTokens()
-                Log.i(TAG, "PAPAPAPAPAPPAPAPAPAPPAPAPAAPAPAPA")
+                getNewTokens()
             }
 
         }

@@ -61,13 +61,6 @@ class TwitchApiService(private val httpClient: HttpClient) {
             }
         }
 
-//        } catch (e: Exception) {
-//            Log.e(TAG, "ERROR AQUIIIIIIIIIIIIIII")
-//            Log.e(TAG, e.toString())
-//            Log.e(TAG, e.cause.toString())
-//            Log.e(TAG, e.message)
-//        }
-
         Log.d(TAG, "getStreams() from Twitch")
 
         // TODO("Get Streams from Twitch")

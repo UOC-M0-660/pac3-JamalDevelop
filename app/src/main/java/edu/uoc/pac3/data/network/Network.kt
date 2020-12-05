@@ -26,10 +26,10 @@ object Network {
             val accessTokenLocal = SessionManager(context).getAccessToken()
             val refreshTokenLocal = SessionManager(context).getRefreshToken()
             // TODO: Setup HttpClient
-            install(OAuthFeature) {
-                getToken = { accessTokenLocal.toString() }
-                refreshToken = { refreshTokenLocal }
-            }
+//            install(OAuthFeature) {
+//                getToken = { accessTokenLocal.toString() }
+//                refreshToken = { refreshTokenLocal }
+//            }
             // Json
             install(JsonFeature) {
                 serializer = KotlinxSerializer(json)
@@ -56,7 +56,7 @@ object Network {
 
                 // Content Type
                 if (this.method != HttpMethod.Get) contentType(ContentType.Application.Json)
-//                header("Authorization", "Bearer ${SessionManager(context).getAccessToken()}")
+                header("Authorization", "Bearer ${SessionManager(context).getAccessToken()}")
                 accept(ContentType.Application.Json)
             }
             // Optional OkHttp Interceptors
