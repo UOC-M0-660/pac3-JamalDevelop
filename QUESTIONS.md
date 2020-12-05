@@ -8,7 +8,7 @@
 Para que estén activos mientras lo esté nuestro componente UI y no consuma recursos innecesarios cuando por ejemplo, se destruye nuestro componente y la tarea sigue ejecutándose en segundo plano.
 
 ##### ¿Qué pasaría si intentamos actualizar la recyclerview con nuevos streams después de que el usuario haya cerrado la aplicación?
-Escribe tu respuesta aquí
+No haria nada. La aplicación estaría cerrada, o sea, destruida. Si estuviera en modo onPause() puede que prepare la app pero no los cargaría hasta que estuviera de nuevo abierta.
 
 ##### Describe brevemente los principales estados del ciclo de vida de una Activity.
 * **onCreate()**: Se activa cuando el sistema crea la actividad por primera vez.
