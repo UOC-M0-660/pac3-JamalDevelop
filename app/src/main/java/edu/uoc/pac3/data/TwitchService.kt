@@ -23,16 +23,28 @@ class TwitchApiService(private val httpClient: HttpClient) {
     /// Gets Access and Refresh Tokens on Twitch
     suspend fun getTokens(authorizationCode: String): OAuthTokensResponse? {
 
-        val response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
-            parameter("client_id", OAuthConstants.CLIENT_ID)
-            parameter("client_secret", OAuthConstants.CLIENT_SECRET)
-            parameter("code", authorizationCode)
-            parameter("grant_type", "authorization_code")
-            parameter("redirect_uri", OAuthConstants.REDIRECT_URI)
+        var response: OAuthTokensResponse? = null
+
+        try {
+            response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
+                parameter("client_id", OAuthConstants.CLIENT_ID)
+                parameter("client_secret", OAuthConstants.CLIENT_SECRET)
+                parameter("code", authorizationCode)
+                parameter("grant_type", "authorization_code")
+                parameter("redirect_uri", OAuthConstants.REDIRECT_URI)
+            }
+
+            Log.d(
+                TAG,
+                "Access Token: ${response.accessToken}. Refresh Token: ${response.refreshToken}"
+            )
+            return response
+        } catch (e: ClientRequestException) {
+            Log.e(TAG, "getTokens(authorizationCode: String) from Twitch Unauthorized - 401")
+            Log.e(TAG, e.toString())
+            return response
         }
 
-        Log.d(TAG, "Access Token: ${response.accessToken}. Refresh Token: ${response.refreshToken}")
-        return response
     }
 
     /// Gets Streams on Twitch
@@ -75,8 +87,9 @@ class TwitchApiService(private val httpClient: HttpClient) {
     @Throws(UnauthorizedException::class)
     suspend fun getUser(): User? {
 //        TODO("Get User from Twitch")
+        var response: User? = null
         try {
-            val response = httpClient.get<User>(Endpoints.users) {
+            response = httpClient.get<User>(Endpoints.users) {
                 headers {
                     append("Client-Id", OAuthConstants.CLIENT_ID)
                 }
@@ -89,7 +102,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
         } catch (e: ClientRequestException) {
             Log.e(TAG, "getUser() from Twitch Unauthorized - 401")
             Log.e(TAG, e.toString())
-            return null
+            return response
         }
 
     }
@@ -98,7 +111,8 @@ class TwitchApiService(private val httpClient: HttpClient) {
     @Throws(UnauthorizedException::class)
     suspend fun updateUserDescription(description: String): User? {
 //        TODO("Update User Description on Twitch")
-        try{
+        var response: User? = null
+        try {
             val response = httpClient.put<User>(Endpoints.users) {
                 headers {
                     append("Client-Id", OAuthConstants.CLIENT_ID)
@@ -113,7 +127,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
         } catch (e: ClientRequestException) {
             Log.e(TAG, "updateUserDescription() from Twitch Unauthorized - 401")
             Log.e(TAG, e.toString())
-            return null
+            return response
         }
 
     }
@@ -135,9 +149,9 @@ class TwitchApiService(private val httpClient: HttpClient) {
 
     /// Gets new Access and Refresh Tokens on Twitch by RefreshToken
     suspend fun getNewTokens(refreshToken: String?): OAuthTokensResponse? {
-
-        try{
-            val response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
+        var response: OAuthTokensResponse? = null
+        try {
+            response = httpClient.post<OAuthTokensResponse>(Endpoints.tokens) {
                 parameter("client_id", OAuthConstants.CLIENT_ID)
                 parameter("client_secret", OAuthConstants.CLIENT_SECRET)
                 parameter("refresh_token", refreshToken)
@@ -152,7 +166,7 @@ class TwitchApiService(private val httpClient: HttpClient) {
         } catch (e: ClientRequestException) {
             Log.e(TAG, "getNewTokens(refreshToken: String?) from Twitch Unauthorized - 401")
             Log.e(TAG, e.toString())
-            return null
+            return response
         }
 
     }
