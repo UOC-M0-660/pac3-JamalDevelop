@@ -15,7 +15,11 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:context=".twitch.streams.StreamsActivity"
+            tools:listitem="@layout/item_list_stream">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

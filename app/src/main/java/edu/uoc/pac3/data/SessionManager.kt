@@ -1,6 +1,9 @@
 package edu.uoc.pac3.data
 
 import android.content.Context
+import android.util.Log
+import edu.uoc.pac3.R
+import edu.uoc.pac3.data.oauth.OAuthConstants
 
 /**
  * Created by alex on 06/09/2020.
@@ -8,34 +11,51 @@ import android.content.Context
 
 class SessionManager(context: Context) {
 
+    private val TAG = "SessionManager"
+    private val sharedPreferences = context.getSharedPreferences(R.string.preference_file_key.toString(), Context.MODE_PRIVATE)
+
     fun isUserAvailable(): Boolean {
-        // TODO: Implement
-        return false
+        Log.i(TAG, "ACCESS-TOKEN-AVAILABLE --> ${(getAccessToken()?.isNotEmpty() ?:false)}")
+        Log.i(TAG, "REFRESH-TOKEN-AVAILABLE --> ${(getRefreshToken()?.isNotEmpty() ?:false)}")
+        return (getAccessToken()?.isNotEmpty() ?:false) && (getRefreshToken()?.isNotEmpty() ?: false)
     }
 
     fun getAccessToken(): String? {
         // TODO: Implement
-        return null
+        return sharedPreferences.getString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, null)
     }
 
     fun saveAccessToken(accessToken: String) {
-        TODO("Save Access Token")
+        // TODO("Save Access Token")
+        sharedPreferences.edit().putString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, accessToken).apply()
+        Log.d(TAG, "accessToken saved!")
     }
 
     fun clearAccessToken() {
-        TODO("Clear Access Token")
+        // TODO("Clear Access Token")
+        sharedPreferences.edit().putString(OAuthConstants.ACCESS_TOKEN_PREFERENCES, "").clear().apply()
+        sharedPreferences.edit().remove(OAuthConstants.ACCESS_TOKEN_PREFERENCES).apply()
+        Log.d(TAG, "accessToken cleared!")
+        Log.d(TAG, "accessToken is --> ${getAccessToken()}")
     }
 
     fun getRefreshToken(): String? {
-        TODO("Get Refresh Token")
+        // TODO("Get Refresh Token")
+        return sharedPreferences.getString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, null)
     }
 
     fun saveRefreshToken(refreshToken: String) {
-        TODO("Save Refresh Token")
+        // TODO("Save Refresh Token")
+        sharedPreferences.edit().putString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, refreshToken).apply()
+        Log.d(TAG, "refreshToken saved!")
     }
 
     fun clearRefreshToken() {
-        TODO("Clear Refresh Token")
+        // TODO("Clear Refresh Token")
+        sharedPreferences.edit().putString(OAuthConstants.REFRESH_TOKEN_PREFERENCES, "").clear().apply()
+        sharedPreferences.edit().remove(OAuthConstants.REFRESH_TOKEN_PREFERENCES).apply()
+        Log.d(TAG, "refreshToken cleared!")
+        Log.d(TAG, "refreshToken is --> ${getRefreshToken()}")
     }
 
 }
