@@ -3,6 +3,7 @@ package edu.uoc.pac3.data.network
 import android.content.Context
 import android.util.Log
 import edu.uoc.pac3.data.SessionManager
+import edu.uoc.pac3.data.oauth.OAuthFeature
 import io.ktor.client.*
 import io.ktor.client.engine.okhttp.*
 import io.ktor.client.features.*
@@ -22,8 +23,13 @@ object Network {
 
     fun createHttpClient(context: Context): HttpClient {
         return HttpClient(OkHttp) {
-
+            val accessTokenLocal = SessionManager(context).getAccessToken()
+            val refreshTokenLocal = SessionManager(context).getRefreshToken()
             // TODO: Setup HttpClient
+//            install(OAuthFeature) {
+//                getToken = { accessTokenLocal.toString() }
+//                refreshToken = { refreshTokenLocal }
+//            }
             // Json
             install(JsonFeature) {
                 serializer = KotlinxSerializer(json)

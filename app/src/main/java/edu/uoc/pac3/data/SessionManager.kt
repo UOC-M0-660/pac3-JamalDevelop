@@ -3,9 +3,7 @@ package edu.uoc.pac3.data
 import android.content.Context
 import android.util.Log
 import edu.uoc.pac3.R
-import edu.uoc.pac3.data.network.Network
 import edu.uoc.pac3.data.oauth.OAuthConstants
-import edu.uoc.pac3.data.user.User
 
 /**
  * Created by alex on 06/09/2020.
