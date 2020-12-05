@@ -101,7 +101,8 @@ class StreamsActivity : AppCompatActivity() {
 
             } catch (e: ClientRequestException) {
                 // Update tokens
-                getNewTokens()
+//                getNewTokens()
+                Log.i(TAG, "PAPAPAPAPAPPAPAPAPAPPAPAPAAPAPAPA")
             }
 
         }
